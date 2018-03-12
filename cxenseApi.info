@@ -1,0 +1,25 @@
+name = Cxense API
+description = Módulo para el consumo de la API de cxense
+package = Servicios
+core = 7.x
+
+; Information added by drupal.org packaging script on 2013-06-12
+version = "7.x-1.x"
+core = "7.x"
+project = "LoginEH"
+datestamp = "1518636028"
+
+configure = admin/cxense/config
+
+dependencies[] = google_chart_tools
+
+; ========================================
+; Scripts
+; ========================================
+;scripts[] = js/logica.js
+
+
+; ========================================
+; Css
+; ========================================
+;stylesheets[all][]  = css/mudle.css

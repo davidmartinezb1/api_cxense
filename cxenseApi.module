@@ -1,0 +1,154 @@
+<?php
+
+/**
+* Implements hook_menu().
+*/
+function cxenseApi_menu() {
+    /*Administrador*/
+    $items['admin/cxense/config'] = array(
+        'title' => 'Cxense',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('cxenseApi_admin'),
+        'access arguments' => array('administer_cxenseApi'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
+    $items['admin/cxense/config/report'] = array(
+        'title' => 'Reportes',
+        'page callback' => 'cxense_reporte',
+        'page arguments' => array('cxenseApi_admin'),
+        'access arguments' => array('administer_reporte_cxenseApi'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['admin/cxense/config/users'] = array(
+        'title' => 'Usuarios más activos',
+        'page callback' => 'cxense_users',
+        'page arguments' => array('cxenseApi_admin'),
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['admin/cxense/config/users/search'] = array(
+        'title' => 'Buscador de usuarios',
+        'page callback' => 'cxense_users_search',
+        'page arguments' => array('cxenseApi_admin'),
+        'access arguments' => array('administer_users_search_cxenseApi'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['admin/cxense/config/users/unique'] = array(
+        'title' => 'Usuarios únicos',
+        'page callback' => 'cxense_users_unique',
+        'page arguments' => array('cxenseApi_admin'),
+        'access arguments' => array('administer_users_unique_cxenseApi'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+  return $items;
+}
+
+function cxenseApi_permission() {
+  return array(
+    'administer_cxenseApi' => array(
+      'title' => t('Módulo para el consumo de la API de cxense'),
+      'description' => t('Permite realizar consultas a la API de cxense '),
+    ),
+    'administer_reporte_cxenseApi' => array(
+      'title' => t('Reporte de datos de cxense'),
+      'description' => t('Permite visualizar los reportes obtenidos desde la API de cxense '),
+    ),
+    'administer_users_cxenseApi' => array(
+      'title' => t('Reporte de usuarios más activos'),
+      'description' => t('Permite visualizar los usuarios más activos obtenidos desde la API de cxense '),
+    ),
+    'administer_users_search_cxenseApi' => array(
+      'title' => t('Buscador de usuarios'),
+      'description' => t('Permite buscar información relacionada a un usuario desde la API de cxense '),
+    ),
+    'administer_users_unique_cxenseApi' => array(
+      'title' => t('Reporte de usuarios únicos'),
+      'description' => t('Permite visualizar los usuarios únicos desde la API de cxense '),
+    ),
+  );
+}
+
+function cxense_reporte(){
+    return theme('cxense_reporte');
+}
+
+function cxense_users(){
+    return theme('cxense_users');
+}
+
+function cxense_users_search(){
+    return theme('cxense_users_search');
+}
+function cxense_users_unique(){
+    return theme('cxense_users_unique');
+}
+
+function cxenseApi_theme(){
+    return array(
+        'cxense_reporte' => array(
+            'template' => 'templates/cxense_reporte', 
+        ),
+        'cxense_users' => array(
+            'template' => 'templates/cxense_users', 
+        ),
+        'cxense_users_search' => array(
+            'template' => 'templates/cxense_users_search', 
+        ),
+        'cxense_users_unique' => array(
+            'template' => 'templates/cxense_users_unique', 
+        ),
+    );
+}
+
+//FORMULARIO DE ADMINISTRACIÓN DE AUTENTIFICACIÓN
+function cxenseApi_admin() {
+    $form = array();
+    $form['user_name_cxense'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Usuario Cxense'),
+        '#description' => t('Ingrese el nombre de usuario'),
+        '#default_value' => variable_get('user_name_cxense', ""),
+        '#required' => true,
+        '#size' => 60,
+    );
+
+    $form['apikey_cxense'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Apikey'),
+        '#default_value' => variable_get('apikey_cxense', ""),
+        '#description' => t('Ingrese la ApiKey suministrada por cxense'),
+        '#required' => true,
+        '#size' => 60,
+    );
+
+    $form['endpoint_cxense'] = array(
+        '#type' => 'textfield',
+        '#title' => t('EndPoint API'),
+        '#default_value' => variable_get('endpoint_cxense', ""),
+        '#description' => t('Ingrese el EndPoint de la api de cxense'),
+        '#required' => true,
+        '#size' => 60,
+    );
+
+    $form['siteIds_cxense'] = array(
+        '#type' => 'textfield',
+        '#title' => t('siteIds'),
+        '#default_value' => variable_get('siteIds_cxense', ""),
+        '#description' => t('Ingrese el siteIds asociado al sitio web'),
+        '#required' => true,
+        '#size' => 60,
+    );
+
+    return system_settings_form($form);
+}
+
+function ShowResponse($request=null,$payload=null){
+    module_load_include('inc', 'cxenseApi', 'createdRequest');
+    $response=createdRequest($request,$payload);    
+    return $response;
+}
